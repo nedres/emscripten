@@ -376,7 +376,9 @@ class RunnerCore(unittest.TestCase):
     open(filename, 'w').write(js.replace('run();', 'run(%s + Module["arguments"]);' % str(args)))
 
   def prep_ll_run(self, filename, ll_file, force_recompile=False, build_ll_hook=None):
-    # force_recompile = force_recompile or os.stat(filename + '.o.ll').st_size > 50000 # if the file is big, recompile just to get ll_opts # Recompiling just for dfe in ll_opts is too costly
+    # force_recompile = force_recompile or os.stat(filename + '.o.ll').st_size > 50000
+    # If the file is big, recompile just to get ll_opts
+    # Recompiling just for dfe in ll_opts is too costly
 
     def fix_target(ll_filename):
       if LLVM_TARGET == ASM_JS_TARGET:
@@ -429,9 +431,7 @@ class RunnerCore(unittest.TestCase):
     # TODO(sbc): We should probably unify Building.COMPILER_TEST_OPTS and self.emcc_args
     return self.serialize_settings() + self.emcc_args + Building.COMPILER_TEST_OPTS
 
-  # Generate JS from ll, and optionally modify the generated JS with a post_build function. Note
-  # that post_build is called on unoptimized JS, so we send it to emcc (otherwise, if run after
-  # emcc, it would not apply on the optimized/minified JS)
+  # Generate JS from ll
   def ll_to_js(self, filename):
     Building.emcc(filename + '.o', self.get_emcc_args(), filename + '.o.js')
 
@@ -850,7 +850,7 @@ class RunnerCore(unittest.TestCase):
                 no_build=True,
                 js_engines=js_engines,
                 output_nicerizer=output_nicerizer,
-                assert_returncode=assert_returncode) # post_build was already done in ll_to_js, this do_run call is just to test the output
+                assert_returncode=assert_returncode)
 
 
 # Run a server and a web page. When a test runs, we tell the server about it,
